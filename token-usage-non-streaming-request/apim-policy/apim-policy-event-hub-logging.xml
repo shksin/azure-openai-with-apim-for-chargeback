@@ -1,0 +1,29 @@
+<policies>
+    <inbound>
+        <base />
+    </inbound>
+    <backend>
+        <base />
+    </backend>
+    <outbound>
+        <choose>
+            <when condition="@(context.Response.StatusCode == 200)">
+                <log-to-eventhub logger-id="TokenUsageLogger">@{
+                var responseBody = context.Response.Body?.As<JObject>(true);
+                return new JObject(
+                    new JProperty("Timestamp", DateTime.UtcNow.ToString()),
+                    new JProperty("ApiOperation", responseBody["object"].ToString()),
+                    new JProperty("AppKey", context.Request.Headers.GetValueOrDefault("Ocp-Apim-Subscription-Key",string.Empty)),
+                     new JProperty("PromptTokens", responseBody["usage"]["prompt_tokens"].ToString()),
+                    new JProperty("CompletionTokens", responseBody["usage"]["completion_tokens"].ToString()),                   
+                    new JProperty("TotalTokens", responseBody["usage"]["total_tokens"].ToString())
+                ).ToString();
+        }</log-to-eventhub>
+            </when>
+        </choose>
+        <base />
+    </outbound>
+    <on-error>
+        <base />
+    </on-error>
+</policies>
