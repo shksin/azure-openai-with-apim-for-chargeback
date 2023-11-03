@@ -27,8 +27,7 @@ namespace EventHubTriggerFunction
         [Function("TokenUsageFunction")]
         public async Task Run([EventHubTrigger("%EventHubName%", Connection = "EventHubConnection")] string[] openAiTokenResponse)
         {
-            var exceptions = new List<Exception>();
-
+            
             //Eventhub Messages arrive as an array            
             foreach (var tokenData in openAiTokenResponse)
             {
@@ -47,9 +46,10 @@ namespace EventHubTriggerFunction
                 }
                 catch (Exception e)
                 {
-                    exceptions.Add(e);
+                    _logger.LogError($"Error occured when processing TokenData: {tokenData}", e.Message);
                 }
             }
+
         }
     }
 }

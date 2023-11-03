@@ -1,11 +1,4 @@
-<policies>
-    <inbound>
-        <base />
-    </inbound>
-    <backend>
-        <base />
-    </backend>
-    <outbound>
+<outbound>
         <choose>
             <when condition="@(context.Response.StatusCode == 200)">
                 <log-to-eventhub logger-id="TokenUsageLogger">@{
@@ -21,9 +14,5 @@
         }</log-to-eventhub>
             </when>
         </choose>
-        <base />
-    </outbound>
-    <on-error>
-        <base />
-    </on-error>
-</policies>
+     <base />
+</outbound>
