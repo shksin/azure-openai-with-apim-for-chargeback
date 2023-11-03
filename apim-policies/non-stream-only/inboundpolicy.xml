@@ -5,6 +5,5 @@
             output-token-variable-name="accessToken" ignore-error="false" />
         <set-header name="Authorization" exists-action="override">
             <value>@("Bearer " + (string)context.Variables["accessToken"])</value>
-        </set-header>
-        <set-variable name="requestBody" value="@(context.Request.Body.As<string>(preserveContent: true))" />
+        </set-header>        
     </inbound>

@@ -1,0 +1,18 @@
+<outbound>
+        <choose>
+            <when condition="@(context.Response.StatusCode == 200)">
+                <log-to-eventhub logger-id="OpenAILogger">@{
+                var responseBody = context.Response.Body?.As<string>(true);
+                var requestBody = (string)context.Variables["requestBody"];                
+                return new JObject(
+                    new JProperty("eventTime", DateTime.UtcNow), 
+                    new JProperty("apiOperation", "ChatCompletion"),
+                    new JProperty("appSubscriptionKey", context.Request.Headers.GetValueOrDefault("Ocp-Apim-Subscription-Key",string.Empty)),                     
+                    new JProperty("request", requestBody),
+                    new JProperty("response",responseBody )
+                ).ToString();
+        }</log-to-eventhub>
+            </when>
+        </choose>
+        <base />
+    </outbound>
